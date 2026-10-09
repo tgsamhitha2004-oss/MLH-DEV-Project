@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f7f2" />
+    <meta name="description" content="Get a clear, photo-aware first look at a home repair—with safety guidance before you start." />
+    <title>FixItLocal — See it. Sort it. Safely.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="FixItLocal home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M19.9 4.2a8.5 8.5 0 0 0-8.5 11.5L4 23.1a3.5 3.5 0 0 0 5 5l7.3-7.3a8.5 8.5 0 0 0 11.5-8.5l-5 5-4.4-.9-.9-4.4 5-5a8.5 8.5 0 0 0-2.6-.4Z"/><circle cx="8" cy="24" r="1"/></svg></span>
+          <span>FixIt<span class="brand-light">Local</span></span>
+        </a>
+        <div class="topbar-right"><span class="status-dot"></span><span>Practical help, right at home</span><span class="topbar-divider"></span><button class="text-button" id="about-button">How it works <span aria-hidden="true">↗</span></button></div>
+      </header>
+
+      <main id="top">
+        <section class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-icon">✳</span> YOUR POCKET-SIZED REPAIR BUDDY</div>
+            <h1>See the problem.<br /><span>Find your next step.</span></h1>
+            <p class="hero-subtitle">Snap a photo, tell us what’s going on. Get a clear first look and a safe plan you can actually follow.</p>
+            <div class="hero-proof"><div class="proof-icon">⌁</div><span>Powered by <strong>Gemma 4 vision</strong></span><span class="proof-separator">·</span><span>Built for everyday fixes</span></div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="art-sun"></div><div class="art-grid"></div>
+            <div class="art-card"><div class="art-device-top"><span></span><span></span><span></span></div><div class="art-device-body"><div class="art-display"><div class="art-display-line"></div><div class="art-display-digits">04<span>.</span></div><div class="art-display-label">WASHER</div></div><div class="art-knob"></div><div class="art-drawer"></div></div><div class="art-device-bottom"></div></div>
+            <div class="art-badge"><span class="badge-spark">✳</span><span>Let’s figure it out</span><span class="badge-arrow">↗</span></div>
+            <div class="art-leaf leaf-one"></div><div class="art-leaf leaf-two"></div>
+            <span class="art-small-label">HOME, MADE EASIER</span>
+          </div>
+        </section>
+
+        <section class="workbench" id="workbench">
+          <div class="workbench-head"><div><div class="section-kicker">THE QUICK CHECK</div><h2>What are we looking at?</h2></div><span class="step-count"><span class="step-current">01</span> <span class="step-slash">/</span> 02</span></div>
+          <div class="workbench-grid">
+            <div class="upload-panel">
+              <div class="panel-label"><span class="number-chip">1</span><div><strong>Show us the spot</strong><small>A clear photo helps us see the details.</small></div></div>
+              <label class="dropzone" id="dropzone" for="photo-input">
+                <input id="photo-input" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+                <div class="upload-empty" id="upload-empty"><span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg></span><strong>Drop a photo here</strong><span>or <span class="browse-link">browse files</span></span><small>JPG, PNG or WEBP · up to 10 MB</small></div>
+                <img id="photo-preview" class="photo-preview hidden" alt="Selected repair photo" />
+                <button type="button" class="remove-photo hidden" id="remove-photo" aria-label="Remove photo">×</button>
+              </label>
+              <div class="photo-tip"><span class="tip-icon">✳</span> <span>Try a close-up of the part, light or connection that looks off.</span></div>
+            </div>
+            <div class="details-panel">
+              <div class="panel-label"><span class="number-chip">2</span><div><strong>Tell us what’s up</strong><small>What happened, and when did you notice?</small></div></div>
+              <label class="sr-only" for="issue-input">Describe what is wrong</label>
+              <textarea id="issue-input" maxlength="500" placeholder="e.g. My dishwasher stopped mid-cycle and this light keeps blinking…"></textarea>
+              <div class="textarea-foot"><span>Keep it simple. We’ll ask if we need more.</span><span id="char-count">0 / 500</span></div>
+              <div class="quick-prompts"><span class="quick-label">TRY ONE</span><button class="prompt-chip" data-prompt="My dishwasher stopped mid-cycle and an error light is blinking.">Dishwasher light</button><button class="prompt-chip" data-prompt="Water is dripping from the valve under my kitchen sink.">Leaky sink</button><button class="prompt-chip" data-prompt="My router is online but the Wi-Fi keeps dropping out.">Spotty Wi-Fi</button></div>
+            </div>
+          </div>
+          <div class="workbench-footer"><div class="privacy-note"><span class="lock-icon">◈</span> Your photo is only used to make this repair guide.</div><button class="primary-button" id="diagnose-button"><span>Get my game plan</span><span class="button-arrow">↗</span></button></div>
+          <div class="demo-note"><span class="demo-spark">✦</span> No photo handy? <button id="sample-button">Try a sample repair</button></div>
+        </section>
+
+        <section class="result-section hidden" id="result-section" aria-live="polite">
+          <div class="result-topline"><span class="result-eyebrow"><span class="result-dot"></span> YOUR REPAIR GAME PLAN</span><button class="start-over" id="start-over">↶ Start a new check</button></div>
+          <div class="result-grid">
+            <article class="diagnosis-card">
+              <div class="diagnosis-image-wrap"><img id="result-photo" alt="Photo provided for repair check" /><div class="image-tag"><span>✳</span> PHOTO REVIEW</div></div>
+              <div class="diagnosis-content"><div class="diagnosis-label">WHAT WE CAN SEE</div><h2 id="result-title">Looking at your repair…</h2><p id="result-summary"></p><div class="confidence-row"><span class="confidence-icon">◎</span><span><strong id="confidence-label">Visual match</strong><small>Based on your photo and description</small></span><span class="confidence-pill" id="confidence-pill">First look</span></div></div>
+            </article>
+            <div class="guide-column">
+              <div class="safety-card" id="safety-card"><div class="safety-icon" id="safety-icon">!</div><div><div class="safety-title" id="safety-title">Before you start</div><p id="safety-text"></p></div></div>
+              <div class="guide-card"><div class="guide-head"><div><div class="guide-kicker">YOUR NEXT MOVES</div><h3>A little plan, step by step.</h3></div><span class="guide-time" id="guide-time">~ 5 MIN</span></div><ol class="steps-list" id="steps-list"></ol><div class="parts-box hidden" id="parts-box"><div class="parts-heading"><span>🛒</span><strong>What you might need</strong></div><ul id="parts-list"></ul></div><div class="guide-foot"><span class="foot-check">✓</span> Take it one step at a time. Stop if anything feels unsafe.</div></div>
+              <div class="pro-card"><div class="pro-icon">↗</div><div><strong>Rather call a pro?</strong><span>We’ll help you know what to tell them.</span></div><button id="pro-button" aria-label="Show professional handoff note">View note <span>→</span></button></div>
+            </div>
+          </div>
+          <div class="result-disclaimer"><span>ⓘ</span> This is a first look, not a definitive diagnosis. If you smell gas, see sparks, or feel unsure, stop and contact a qualified professional.</div>
+        </section>
+      </main>
+      <footer><span>FixItLocal <span class="footer-mark">✳</span></span><span>Good fixes start with a clear look.</span><span>Made for the things that keep life moving.</span></footer>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <div class="modal-backdrop hidden" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="modal-close" id="modal-close" aria-label="Close">×</button><div class="modal-icon">✳</div><div class="modal-kicker">A HANDOFF THAT HELPS</div><h2 id="modal-title">Here’s what to tell a pro</h2><p id="pro-note"></p><button class="secondary-button" id="copy-note">Copy note</button></div></div>
+    <script src="app.js" defer></script>
+  </body>
+</html>
