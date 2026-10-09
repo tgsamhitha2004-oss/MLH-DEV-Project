@@ -1,12 +1,20 @@
+import 'dotenv/config';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { GoogleAuth } from 'google-auth-library';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.env.PORT || 3000);
-const key = process.env.GEMINI_API_KEY;
+const googleProject = process.env.GOOGLE_CLOUD_PROJECT || process.env.GEMINI_PROJECT_ID;
 const model = process.env.GEMMA_MODEL || 'gemma-4-26b-a4b-it';
+const googleAuth = new GoogleAuth({
+  scopes: [
+    'https://www.googleapis.com/auth/cloud-platform',
+    'https://www.googleapis.com/auth/generative-language.retriever',
+  ],
+});
 const maxImageBytes = 10 * 1024 * 1024;
 const maxRequestBytes = 15 * 1024 * 1024;
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml' };
@@ -37,7 +45,7 @@ User description: ${description}`;
 }
 
 async function diagnose(req, res) {
-  if (!key) return reply(res, 503, { error: 'Gemini API key is missing. Add GEMINI_API_KEY to .env and restart the server.' });
+  if (!googleProject) return reply(res, 503, { error: 'Google Cloud project is missing. Set GOOGLE_CLOUD_PROJECT in .env.' });
   const data = await parseBody(req);
   if (typeof data.description !== 'string' || data.description.trim().length < 3 || data.description.length > 500) return reply(res, 400, { error: 'Add a short description of what happened (up to 500 characters).' });
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(data.mimeType)) return reply(res, 415, { error: 'Choose a JPG, PNG or WEBP photo.' });
@@ -47,11 +55,15 @@ async function diagnose(req, res) {
   catch { return reply(res, 400, { error: 'Could not read that photo. Try another image.' }); }
   if (!imageBytes.length || imageBytes.length > maxImageBytes) return reply(res, 413, { error: 'That photo is over 10 MB. Choose a smaller image.' });
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   let upstream;
   try {
+    const authClient = await googleAuth.getClient();
+    const authHeaders = new Headers(await authClient.getRequestHeaders(endpoint));
+    authHeaders.set('Content-Type', 'application/json');
+    authHeaders.set('x-goog-user-project', googleProject);
     upstream = await fetch(endpoint, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: authHeaders,
       body: JSON.stringify({
         contents: [{ parts: [{ text: buildPrompt(data.description.trim()) }, { inlineData: { mimeType: data.mimeType, data: data.image } }] }],
         generationConfig: { temperature: 0.2, maxOutputTokens: 1200 },
@@ -59,12 +71,19 @@ async function diagnose(req, res) {
       signal: AbortSignal.timeout(60000),
     });
   } catch (error) {
+    if (error.code === 'ENOENT' || /default credentials|credentials were not found|could not load the default credentials/i.test(error.message || '')) {
+      return reply(res, 503, { error: 'Google ADC credentials were not found. Set them up with gcloud auth application-default login, then restart the server.' });
+    }
     return reply(res, 502, { error: error.name === 'TimeoutError' ? 'The visual check took too long. Please try again.' : 'Could not reach the Gemma service. Check your connection and try again.' });
   }
   const result = await upstream.json().catch(() => ({}));
   if (!upstream.ok) {
-    const message = result.error?.message || 'The Gemma service could not complete the check.';
-    return reply(res, upstream.status === 429 ? 429 : 502, { error: upstream.status === 401 || upstream.status === 403 ? 'The Gemini API key was rejected. Check GEMINI_API_KEY.' : message.slice(0, 240) });
+    const status = upstream.status;
+    const message = status === 401 ? 'Google ADC authentication failed. Refresh your ADC login and try again.'
+      : status === 403 ? 'Google denied this request. Check that the Generative Language API is enabled and your ADC identity can use it.'
+        : status === 404 ? 'This Gemma model is unavailable to the current Google project.'
+          : result.error?.message || 'The Gemma service could not complete the check.';
+    return reply(res, status === 429 ? 429 : status === 401 || status === 403 ? 403 : 502, { error: message.slice(0, 300) });
   }
   const text = result.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('').trim();
   if (!text) return reply(res, 502, { error: 'Gemma returned no repair guidance. Please try a clearer photo.' });

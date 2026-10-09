@@ -135,7 +135,7 @@ async function runDiagnosis() {
     latestResult = safetyOverride(normalizeResult(response), description);
     renderResult(latestResult);
   } catch (error) {
-    showToast(error.message.includes('API key') ? 'Add your Gemini API key in .env to analyze photos. Try the sample in the meantime.' : error.message || 'Something went wrong. Try the sample repair.');
+    showToast(error.message || 'Something went wrong. Check Google ADC setup or try the sample repair.');
   } finally {
     diagnoseButton.disabled = false;
     diagnoseButton.innerHTML = '<span>Get my game plan</span><span class="button-arrow">↗</span>';
