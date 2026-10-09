@@ -16,6 +16,12 @@ Open [http://localhost:3000](http://localhost:3000). Without an API key, the sam
 
 Set `GEMMA_MODEL` to choose a Gemma 4 model available to your API key. The default is `gemma-4-26b-a4b-it`.
 
+## Deploy on DigitalOcean App Platform
+
+The App Platform service configuration is in [`.do/app.yaml`](.do/app.yaml). After these changes are pushed to the public GitHub repository, connect it in DigitalOcean App Platform and deploy from this spec. In the service settings, add `GEMINI_API_KEY` as a **secret runtime environment variable** before using photo analysis. Do not put the key in the app spec or commit it. The sample walkthrough works without it. App Platform injects the configured `PORT`; the server uses that port automatically. The spec prepares deployment; it does not create a DigitalOcean app by itself.
+
+The source is released under the [MIT License](LICENSE).
+
 ## What it does
 
 - Accepts JPG, PNG, and WEBP images up to 10 MB.
@@ -36,4 +42,8 @@ FixItLocal is an educational first look, not a definitive diagnosis or a substit
 
 ## Hackathon fit
 
-FixItLocal makes the screen a short step between a household problem and an informed real-world action. It uses an open-weight Gemma model for image-plus-text reasoning and communicates uncertainty before suggesting a repair. This project is a fit for the Hacktoberfest Open-Source AI Challenge Week 1 theme, “Touch Grass,” and the Best Use of Gemma category.
+FixItLocal is designed for the Hacktoberfest Hack Day Montréal × AGEEI **Best Use of Gemma 4** category. It pairs a user's photo with their description and uses Gemma 4's multimodal reasoning as the core of a focused troubleshooting guide. This matches the category's text-and-image and productivity/learning focus. Hosted inference through Gemini API is part of the documented Gemma workflow; the project does not claim local or offline inference.
+
+It also targets the **Best Use of DigitalOcean** category with a DigitalOcean App Platform deployment spec. To demonstrate actual DigitalOcean usage, deploy the public GitHub repository to App Platform and add the Gemini API key as a secret there. The repository uses the MIT open-source license, and Gemma 4 is the open-weight model central to photo-based diagnosis. Together these make the open model and DigitalOcean hosting concrete parts of how the project works.
+
+For the separate Hacktoberfest Open-Source AI Challenge Week 1 “Touch Grass” prompt, FixItLocal aims to make the screen a short step toward a real-world repair. The challenge requires a public GitHub repository, an open-source license, and open-source/open-weight AI as an important part of the project; those are represented here by the GitHub source, MIT license, and Gemma 4 integration.

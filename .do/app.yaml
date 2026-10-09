@@ -1,0 +1,13 @@
+name: fixitlocal
+services:
+  - name: web
+    github:
+      repo: tgsamhitha2004-oss/MLH-DEV-Project
+      branch: main
+      deploy_on_push: true
+    source_dir: /
+    environment_slug: node-js
+    run_command: npm start
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
